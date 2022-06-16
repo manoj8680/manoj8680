@@ -32,6 +32,7 @@ alt #lightgreen SUCCESS
     NetworkMonitor -> PlatformSocket: ping
     NetworkMonitor -> NetworkMonitor: waitForPong
         alt #FF7276 delay > expectedDelay
+            NetworkMonitor -> NetworkMonitor: stopAndResetTimer
             NetworkMonitor -> PlatformSocket: onNetworkLost
             PlatformSocket -> MessagingClient: onFailure(networkLost)
             MessagingClient -> MessageStore: invalidateConversationCache
