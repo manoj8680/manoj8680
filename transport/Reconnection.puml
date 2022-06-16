@@ -1,0 +1,77 @@
+@startuml
+
+skinparam {
+        ArrowColor darkBlue
+        backgroundColor #EEEBDC
+        NoteBackgroundColor #lightyellow
+        NoteBorderColor gray
+        sequenceGroupHeaderFontColor midnightblue
+        padding 6
+}
+
+participant UI #red
+participant MobileMessenger #skyBlue
+participant MessagingClient #skyBlue
+participant NetworkMonitor #skyBlue
+participant PlatformSocket #skyBlue
+participant ReconnectionHandler #skyBlue
+participant MessageStore #skyBlue
+
+UI -> MobileMessenger: createMessagingClient(Configuration)
+MobileMessenger -> ReconnectionHandler: setMaxAttempts(configuration.maxAttempts)
+MobileMessenger --> UI: MessagingClient
+UI -> MessagingClient: connectAndConfigure
+MessagingClient --> UI: onStateChanged(Connecting)
+MessagingClient -> PlatformSocket: connect
+
+
+alt #lightgreen SUCCESS
+    PlatformSocket --> MessagingClient: onOpen
+    MessagingClient --> UI: onStateChanged(Connected)
+    loop #EEEBDC forever
+    NetworkMonitor -> PlatformSocket: ping
+    NetworkMonitor -> NetworkMonitor: waitForPong
+        alt #FF7276 delay > expectedDelay
+            NetworkMonitor -> PlatformSocket: onNetworkLost
+            PlatformSocket -> MessagingClient: onFailure(networkLost)
+            MessagingClient -> MessageStore: invalidateConversationCache
+            MessagingClient -> ReconnectionHandler: shouldReconnect
+            note right ReconnectionHandler
+                Maybe delay reconnection if
+                it is not the first attempt
+            end note
+            ReconnectionHandler -> ReconnectionHandler: attempt > maxAttempts
+            ReconnectionHandler -> ReconnectionHandler: attempt++
+            alt #lightgreen shouldReconnect == true
+                MessagingClient --> UI: onStateChanged(Reconnecting)
+                MessagingClient -> PlatformSocket: connect
+                note right MessagingClient
+                                In case connect or configure failed iterate over shouldReconnect
+                            end note
+                PlatformSocket --> MessagingClient: onOpen
+                MessagingClient -> PlatformSocket: configure
+                PlatformSocket --> MessagingClient: onConfigured
+                MessagingClient -> ReconnectionHandler: resetAttempts
+                MessagingClient --> UI: onStateChanged(Reconnected)
+            else #FF7276 shouldReconnect == false
+                MessagingClient --> UI: onStateChanged(Error)
+            end
+        end
+    PlatformSocket --> NetworkMonitor: pong
+    NetworkMonitor -> NetworkMonitor: sleep for: TBD
+    end
+alt SUCCESS
+    MessagingClient -> PlatformSocket: configure
+    PlatformSocket --> MessagingClient: onConfigured
+    MessagingClient --> UI: onStateChanged(Configured)
+else #FF7276 FAILURE
+    PlatformSocket --> MessagingClient: onFailure
+    MessagingClient --> UI: onStateChanged(Error)
+end
+else #FF7276 FAILURE
+    PlatformSocket --> MessagingClient: onFailure
+    MessagingClient --> UI: onStateChanged(Error)
+end
+@enduml
+
+
