@@ -216,6 +216,7 @@ class ComposePrototypeUITest : BaseTests() {
             verifyResponse(typingIndicatorResponse)
             apiHelper.sendConnectOrDisconnect(conversationInfo)
         } else AssertionError("Agent did not answer conversation.")
+        bye()
         apiHelper.disconnectAllConversations()
     }
 
@@ -234,6 +235,7 @@ class ComposePrototypeUITest : BaseTests() {
             Log.i(TAG, "Conversation started successfully with autoStart enabled.")
             apiHelper.sendConnectOrDisconnect(conversationInfo)
         }
+        bye()
         apiHelper.disconnectAllConversations()
     }
 
@@ -394,6 +396,7 @@ class ComposePrototypeUITest : BaseTests() {
                 apiHelper.waitForParticipantToConnectOrDisconnect(conversation2Info.id)
             }
         }
+        bye()
     }
 
     @Test
@@ -422,7 +425,7 @@ class ComposePrototypeUITest : BaseTests() {
                 // wait for agent to disconnect
                 apiHelper.waitForParticipantToConnectOrDisconnect(conversation2Info.id)
             }
-            bye()
         }
+        bye()
     }
-}
+    }
