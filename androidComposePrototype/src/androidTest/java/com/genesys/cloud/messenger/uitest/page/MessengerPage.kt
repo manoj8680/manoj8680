@@ -80,9 +80,11 @@ class MessengerPage(activity: Activity) : BasePage(activity) {
 
     // Wait for client to return proper response
     fun waitForProperResponse(response: String) {
-        Awaitility.await().atMost(waitTime, SECONDS)
+        var fullResponse = ""
+        await().atMost(waitTime, SECONDS)
             .until {
-                getFullResponse().contains(response, ignoreCase = true)
+                fullResponse = getFullResponse()
+                fullResponse.contains(response, ignoreCase = true)
             }
     }
 
@@ -93,14 +95,14 @@ class MessengerPage(activity: Activity) : BasePage(activity) {
     }
 
     fun waitForAuthMsgReceived(messageToBeReceived: String) {
+        var authStateReceived = ""
         await().atMost(waitTime, SECONDS)
             .until {
-                (
-                    getAuthStateResponse().contains(
-                        messageToBeReceived,
-                        ignoreCase = true
-                    )
-                    )
+                authStateReceived = getAuthStateResponse()
+                authStateReceived.contains(
+                    messageToBeReceived,
+                    ignoreCase = true
+                )
             }
     }
 

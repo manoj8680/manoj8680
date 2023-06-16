@@ -110,6 +110,7 @@ class ComposePrototypeUITest : BaseTests() {
             verifyPageIsVisible()
             enterCommand(oktaLogoutText)
             waitForAuthMsgReceived(loggedOutText)
+            waitForClosed()
         }
     }
 
