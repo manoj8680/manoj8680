@@ -394,7 +394,7 @@ class ComposePrototypeUITest : BaseTests() {
     @Test
     fun testDisconnectAgent_ReadOnly() {
         apiHelper.disconnectAllConversations()
-        enterDeploymentInfo(testConfig.deploymentId)
+        enterDeploymentInfo(testConfig.agentDisconnectDeploymentId)
         connect()
         sendMsg(helloText)
         val conversationInfo = apiHelper.answerNewConversation()
@@ -417,7 +417,7 @@ class ComposePrototypeUITest : BaseTests() {
     @Test
     fun testDisconnectAgent_NotReadOnly() {
         apiHelper.disconnectAllConversations()
-        enterDeploymentInfo(testConfig.agentDisconnectDeploymentId)
+        enterDeploymentInfo(testConfig.deploymentId)
         connect()
         sendMsg(helloText)
         val conversationInfo = apiHelper.answerNewConversation()
@@ -446,7 +446,7 @@ class ComposePrototypeUITest : BaseTests() {
     @Test
     fun testHistoryPull() {
         apiHelper.disconnectAllConversations()
-        enterDeploymentInfo(testConfig.deploymentId)
+        enterDeploymentInfo(testConfig.agentDisconnectDeploymentId)
         connect()
         sendMsg(helloText)
         val conversationInfo = apiHelper.answerNewConversation()
