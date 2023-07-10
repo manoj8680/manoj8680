@@ -232,4 +232,7 @@ interface MessagingClient {
      */
     @Throws(IllegalStateException::class)
     fun logoutFromAuthenticatedSession()
+
+    @Throws(IllegalStateException::class)
+    fun clearConversation()
 }

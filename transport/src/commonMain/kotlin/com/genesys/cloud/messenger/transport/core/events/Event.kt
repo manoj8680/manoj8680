@@ -59,4 +59,6 @@ sealed class Event {
      * Sent when user has been logged out from authenticated session.
      */
     object Logout : Event()
+
+    object Clear : Event()
 }

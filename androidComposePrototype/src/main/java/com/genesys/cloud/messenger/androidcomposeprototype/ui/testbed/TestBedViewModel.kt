@@ -133,7 +133,7 @@ class TestBedViewModel : ViewModel(), CoroutineScope {
             "attach" -> doAttach()
             "detach" -> doDetach(input)
             "deployment" -> doDeployment()
-            "clearConversation" -> doClearConversation()
+            "clearConversation" -> doInvalidateConversationCache()
             "addAttribute" -> doAddCustomAttributes(input)
             "typing" -> doIndicateTyping()
             "newChat" -> doStartNewChat()
@@ -141,6 +141,7 @@ class TestBedViewModel : ViewModel(), CoroutineScope {
             "oktaSignInWithPKCE" -> doOktaSignIn(true)
             "oktaLogout" -> logoutFromOktaSession()
             "authorize" -> doAuthorize()
+            "clear" -> doClearConversation()
             else -> {
                 Log.e(TAG, "Invalid command")
                 commandWaiting = false
@@ -256,7 +257,7 @@ class TestBedViewModel : ViewModel(), CoroutineScope {
         }
     }
 
-    private fun doClearConversation() {
+    private fun doInvalidateConversationCache() {
         client.invalidateConversationCache()
         clearCommand()
     }
@@ -292,6 +293,15 @@ class TestBedViewModel : ViewModel(), CoroutineScope {
             redirectUri = BuildConfig.SIGN_IN_REDIRECT_URI,
             codeVerifier = if (pkceEnabled) BuildConfig.CODE_VERIFIER else null
         )
+    }
+
+    private fun doClearConversation() {
+        try {
+            client.clearConversation()
+            commandWaiting = false
+        } catch (t: Throwable) {
+            handleException(t, "clear conversation.")
+        }
     }
 
     private fun onClientStateChanged(oldState: State, newState: State) {

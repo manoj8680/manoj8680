@@ -25,6 +25,7 @@ import com.genesys.cloud.messenger.transport.shyrka.receive.JwtResponse
 import com.genesys.cloud.messenger.transport.shyrka.receive.LogoutEvent
 import com.genesys.cloud.messenger.transport.shyrka.receive.PresenceEvent
 import com.genesys.cloud.messenger.transport.shyrka.receive.PresignedUrlResponse
+import com.genesys.cloud.messenger.transport.shyrka.receive.SessionClearedEvent
 import com.genesys.cloud.messenger.transport.shyrka.receive.SessionExpiredEvent
 import com.genesys.cloud.messenger.transport.shyrka.receive.SessionResponse
 import com.genesys.cloud.messenger.transport.shyrka.receive.StructuredMessage
@@ -35,6 +36,7 @@ import com.genesys.cloud.messenger.transport.shyrka.receive.UploadSuccessEvent
 import com.genesys.cloud.messenger.transport.shyrka.receive.isHealthCheckResponse
 import com.genesys.cloud.messenger.transport.shyrka.receive.isOutbound
 import com.genesys.cloud.messenger.transport.shyrka.send.AutoStartRequest
+import com.genesys.cloud.messenger.transport.shyrka.send.ClearConversationRequest
 import com.genesys.cloud.messenger.transport.shyrka.send.CloseSessionRequest
 import com.genesys.cloud.messenger.transport.shyrka.send.ConfigureAuthenticatedSessionRequest
 import com.genesys.cloud.messenger.transport.shyrka.send.ConfigureSessionRequest
@@ -252,6 +254,15 @@ internal class MessagingClientImpl(
     override fun logoutFromAuthenticatedSession() {
         stateMachine.checkIfConfigured()
         authHandler.logout()
+    }
+
+    @Throws(IllegalStateException::class)
+    override fun clearConversation() {
+        stateMachine.checkIfConfiguredOrReadOnly()
+        WebMessagingJson.json.encodeToString(ClearConversationRequest(token)).let {
+            log.i { "sendClearConversation()" }
+            webSocket.sendMessage(it)
+        }
     }
 
     override fun invalidateConversationCache() {
@@ -552,6 +563,9 @@ internal class MessagingClientImpl(
                         authHandler.clear()
                         eventHandler.onEvent(Event.Logout)
                         disconnect()
+                    }
+                    is SessionClearedEvent -> {
+                        eventHandler.onEvent(Event.Clear)
                     }
                     else -> {
                         log.i { "Unhandled message received from Shyrka: $decoded " }

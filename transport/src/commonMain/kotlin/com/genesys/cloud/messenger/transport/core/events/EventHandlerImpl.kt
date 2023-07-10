@@ -34,6 +34,7 @@ internal fun StructuredMessageEvent.toTransportEvent(): Event? {
             when (this.presence.type) {
                 PresenceEvent.Presence.Type.Join -> Event.ConversationAutostart
                 PresenceEvent.Presence.Type.Disconnect -> Event.ConversationDisconnect
+                PresenceEvent.Presence.Type.Clear -> Event.Clear
             }
         }
         is Unknown -> null
