@@ -26,6 +26,7 @@ data class Message(
     val text: String? = null,
     val timeStamp: Long? = null,
     val attachments: Map<String, Attachment> = emptyMap(),
+    val quickReplies: List<QuickReply> = emptyList(),
     val events: List<Event> = emptyList(),
     val from: Participant = Participant(
         originatingEntity = Participant.OriginatingEntity.Human
@@ -81,11 +82,13 @@ data class Message(
     @Serializable
     data class Content(
         val contentType: Type,
-        val attachment: Attachment,
+        val attachment: Attachment? = null,
+        val buttonResponse: ButtonResponse? = null,
     ) {
         @Serializable
         enum class Type {
-            Attachment
+            Attachment,
+            ButtonResponse,
         }
     }
 

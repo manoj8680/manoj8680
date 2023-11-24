@@ -3,8 +3,11 @@ package com.genesys.cloud.messenger.transport.util.extensions
 import com.genesys.cloud.messenger.transport.core.Attachment
 import com.genesys.cloud.messenger.transport.core.Message
 import com.genesys.cloud.messenger.transport.core.Message.Direction
+import com.genesys.cloud.messenger.transport.core.QuickReply
 import com.genesys.cloud.messenger.transport.core.events.toTransportEvent
 import com.genesys.cloud.messenger.transport.shyrka.receive.StructuredMessage
+import com.genesys.cloud.messenger.transport.shyrka.receive.StructuredMessage.Content.AttachmentContent
+import com.genesys.cloud.messenger.transport.shyrka.receive.StructuredMessage.Content.QuickReplyContent
 import com.genesys.cloud.messenger.transport.shyrka.receive.isInbound
 import com.soywiz.klock.DateTime
 
@@ -22,8 +25,8 @@ internal fun StructuredMessage.toMessage(): Message {
         type = type.name,
         text = text,
         timeStamp = channel?.time.fromIsoToEpochMilliseconds(),
-        attachments = content.filterIsInstance<StructuredMessage.Content.AttachmentContent>()
-            .toAttachments(),
+        attachments = content.filterIsInstance<AttachmentContent>().toAttachments(),
+        quickReplies = content.filterIsInstance<QuickReplyContent>().toQuickReplies(),
         events = events.mapNotNull { it.toTransportEvent() },
         from = Message.Participant(
             name = channel?.from?.nickname,
@@ -63,7 +66,7 @@ internal fun String?.mapOriginatingEntity(isInbound: () -> Boolean): Message.Par
     }
 }
 
-private fun List<StructuredMessage.Content.AttachmentContent>.toAttachments(): Map<String, Attachment> {
+private fun List<AttachmentContent>.toAttachments(): Map<String, Attachment> {
     return this.associate {
         it.run {
             this.attachment.id to Attachment(
@@ -72,5 +75,15 @@ private fun List<StructuredMessage.Content.AttachmentContent>.toAttachments(): M
                 state = Attachment.State.Sent(this.attachment.url),
             )
         }
+    }
+}
+
+private fun List<QuickReplyContent>.toQuickReplies(): List<QuickReply> {
+    return this.map {
+        QuickReply(
+            text = it.quickReply.text,
+            payload = it.quickReply.payload,
+            action = it.quickReply.action,
+        )
     }
 }

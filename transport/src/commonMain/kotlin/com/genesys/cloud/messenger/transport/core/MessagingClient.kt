@@ -257,4 +257,7 @@ interface MessagingClient {
      */
     @Throws(IllegalStateException::class)
     fun clearConversation()
+
+    @Throws(IllegalStateException::class)
+    fun sendQr(qr: String)
 }

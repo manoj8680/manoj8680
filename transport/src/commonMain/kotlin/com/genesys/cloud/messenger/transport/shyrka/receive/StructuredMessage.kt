@@ -63,6 +63,7 @@ internal data class StructuredMessage(
         @Serializable
         enum class Type {
             Attachment,
+            QuickReply,
         }
 
         @Serializable
@@ -84,6 +85,19 @@ internal data class StructuredMessage(
         }
 
         @Serializable
+        data class QuickReplyContent(
+            val contentType: String,
+            val quickReply: QuickReply,
+        ) : Content() {
+            @Serializable
+            data class QuickReply(
+                val text: String,
+                val payload: String,
+                val action: String,
+            )
+        }
+
+        @Serializable
         internal object UnknownContent : Content()
     }
 
@@ -92,6 +106,7 @@ internal data class StructuredMessage(
         override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out Content> {
             return when (element.jsonObject["contentType"]?.jsonPrimitive?.content) {
                 Content.Type.Attachment.name -> Content.AttachmentContent.serializer()
+                Content.Type.QuickReply.name -> Content.QuickReplyContent.serializer()
                 else -> Content.UnknownContent.serializer()
             }
         }

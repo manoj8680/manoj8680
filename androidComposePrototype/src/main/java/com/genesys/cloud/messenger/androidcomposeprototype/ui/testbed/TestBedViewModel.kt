@@ -142,10 +142,20 @@ class TestBedViewModel : ViewModel(), CoroutineScope {
             "oktaLogout" -> logoutFromOktaSession()
             "authorize" -> doAuthorize()
             "clearConversation" -> doClearConversation()
+            "qr" -> doQR(input)
             else -> {
                 Log.e(TAG, "Invalid command")
                 commandWaiting = false
             }
+        }
+    }
+
+    private fun doQR(qr: String) {
+        try {
+            client.sendQr(qr)
+            commandWaiting = false
+        } catch (e: Exception) {
+            handleException(e, "send qr: $qr")
         }
     }
 

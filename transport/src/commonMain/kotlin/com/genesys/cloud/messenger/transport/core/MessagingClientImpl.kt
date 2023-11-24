@@ -43,6 +43,8 @@ import com.genesys.cloud.messenger.transport.shyrka.send.ConfigureSessionRequest
 import com.genesys.cloud.messenger.transport.shyrka.send.JourneyContext
 import com.genesys.cloud.messenger.transport.shyrka.send.JourneyCustomer
 import com.genesys.cloud.messenger.transport.shyrka.send.JourneyCustomerSession
+import com.genesys.cloud.messenger.transport.shyrka.send.OnMessageRequest
+import com.genesys.cloud.messenger.transport.shyrka.send.TextMessage
 import com.genesys.cloud.messenger.transport.util.Platform
 import com.genesys.cloud.messenger.transport.util.Vault
 import com.genesys.cloud.messenger.transport.util.extensions.toMessage
@@ -291,6 +293,22 @@ internal class MessagingClientImpl(
         }
     }
 
+    override fun sendQr(qr: String) {
+        val request = OnMessageRequest(
+            token = token,
+            message = TextMessage(
+                text = "qr",
+                content = listOf(
+                    Message.Content(
+                        contentType = Message.Content.Type.ButtonResponse,
+                        buttonResponse = ButtonResponse(text = qr, type = "QuickReply", payload = qr)
+                    )
+                ),
+            )
+        )
+        webSocket.sendMessage(WebMessagingJson.json.encodeToString(request))
+    }
+
     override fun invalidateConversationCache() {
         log.i { "Clear conversation history." }
         messageStore.invalidateConversationCache()
@@ -472,8 +490,10 @@ internal class MessagingClientImpl(
                     }
                 }
             }
-            else -> {
-                log.w { "Messages of type: ${structuredMessage.type} are not supported." }
+            StructuredMessage.Type.Structured -> {
+                with(structuredMessage.toMessage()) {
+                    log.w { "Messages of type: ${structuredMessage.type} is received: $this" }
+                }
             }
         }
     }
