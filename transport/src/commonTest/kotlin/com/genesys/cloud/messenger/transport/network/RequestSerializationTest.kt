@@ -44,7 +44,7 @@ import kotlin.test.Test
 class RequestSerializationTest {
 
     @Test
-    fun `validate AutoStartRequest serialization`() {
+    fun `validateAutoStartRequestSerialization`() {
         val expectedPresenceEvent = PresenceEvent(
             eventType = StructuredMessageEvent.Type.Presence,
             presence = Presence(type = Presence.Type.Join),
@@ -68,7 +68,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate Channel serialization`() {
+    fun `validateChannelSerialization`() {
         val expectedMetadata = Channel.Metadata(mapOf("A" to "B"))
         val expectedRequest = Channel(expectedMetadata)
         val expectedJson = """{"metadata":{"customAttributes":{"A":"B"}}}"""
@@ -85,7 +85,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate ClearConversationRequest serialization`() {
+    fun `validateClearConversationRequestSerialization`() {
         val expectedPresenceEvent = PresenceEvent(
             eventType = StructuredMessageEvent.Type.Presence,
             presence = Presence(type = Presence.Type.Clear),
@@ -114,7 +114,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate CloseSessionRequest serialization`() {
+    fun `validateCloseSessionRequestSerialization`() {
         val expectedRequest = CloseSessionRequest(
             token = TestValues.Token,
             closeAllConnections = true,
@@ -134,7 +134,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate ConfigureAuthenticatedSessionRequest serialization`() {
+    fun `validateConfigureAuthenticatedSessionRequestSerialization`() {
         val expectedData = ConfigureAuthenticatedSessionRequest.Data(AuthTest.JwtToken)
         val expectedRequest = ConfigureAuthenticatedSessionRequest(
             token = TestValues.Token,
@@ -173,7 +173,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate ConfigureSessionRequest serialization`() {
+    fun `validateConfigureSessionRequestSerialization`() {
         val expectedRequest = ConfigureSessionRequest(
             token = TestValues.Token,
             deploymentId = TestValues.DeploymentId,
@@ -196,7 +196,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate DeleteAttachmentRequest serialization`() {
+    fun `validateDeleteAttachmentRequestSerialization`() {
         val expectedRequest = DeleteAttachmentRequest(
             token = TestValues.Token,
             attachmentId = AttachmentValues.Id
@@ -216,7 +216,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate EchoRequest serialization`() {
+    fun `validateEchoRequestSerialization`() {
         val expectedTextMessage = TextMessage("ping", mapOf("customMessageId" to HealthCheckID))
         val expectedRequest = EchoRequest(
             token = TestValues.Token,
@@ -240,7 +240,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate EventMessage serialization`() {
+    fun `validateEventMessageSerialization`() {
         val expectedEvent = TypingEvent(
             eventType = StructuredMessageEvent.Type.Typing,
             typing = TypingEvent.Typing(type = "typing", duration = 100)
@@ -265,7 +265,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate GetAttachmentRequest serialization`() {
+    fun `validateGetAttachmentRequestSerialization`() {
         val expectedRequest = GetAttachmentRequest(
             token = TestValues.Token,
             attachmentId = AttachmentValues.Id
@@ -285,7 +285,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate JourneyContext serialization`() {
+    fun `validateJourneyContextSerialization`() {
         val expectedJourneyCustomer =
             JourneyCustomer(id = Journey.CustomerId, idType = Journey.CustomerIdType)
         val expectedCustomerSession = JourneyCustomerSession(
@@ -374,7 +374,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate JwtRequest serialization`() {
+    fun `validateJwtRequestSerialization`() {
         val expectedRequest = JwtRequest(token = TestValues.Token)
         val expectedJson = """{"token":"${TestValues.Token}","action":"getJwt"}"""
 
@@ -389,7 +389,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate OAuth serialization`() {
+    fun `validateOAuthSerialization`() {
         val expectedRequest = OAuth(
             code = AuthTest.AuthCode,
             redirectUri = AuthTest.RedirectUri,
@@ -410,7 +410,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate OnAttachmentRequest serialization`() {
+    fun `validateOnAttachmentRequestSerialization`() {
         val expectedRequest = OnAttachmentRequest(
             token = TestValues.Token,
             attachmentId = AttachmentValues.Id,
@@ -439,7 +439,7 @@ class RequestSerializationTest {
     }
 
     @Test
-    fun `validate UserTypingRequest serialization`() {
+    fun `validateUserTypingRequestSerialization`() {
         val expectedEvent = TypingEvent(
             eventType = StructuredMessageEvent.Type.Typing,
             typing = TypingEvent.Typing(type = "On")
