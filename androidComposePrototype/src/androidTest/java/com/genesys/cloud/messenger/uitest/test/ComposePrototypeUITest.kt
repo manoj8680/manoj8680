@@ -304,7 +304,7 @@ class ComposePrototypeUITest : BaseTests() {
 
     @Test
     // Adjusting the test name to force this test to run first
-    fun test3VerifyAutoStart() {
+    fun testVerifyAutoStart() {
         apiHelper.disconnectAllConversations()
         enterDeploymentInfo(testConfig.deploymentId)
         // Force a new session. AutoStart is enabled and newSession is true
@@ -510,7 +510,7 @@ class ComposePrototypeUITest : BaseTests() {
     }
 
     @Test
-    fun test2AuthenticatedUser() {
+    fun testzAuthenticatedUser() {
         apiHelper.disconnectAllConversations()
         enterDeploymentInfo(testConfig.authDeploymentId)
         oktaSignInWithPKCE(testConfig.oktaUsername, testConfig.oktaPassword)
@@ -543,7 +543,7 @@ class ComposePrototypeUITest : BaseTests() {
     }
 
     @Test
-    fun test1UnAuthenticatedUser() {
+    fun testzUnAuthenticatedUser() {
         enterDeploymentInfo(testConfig.authDeploymentId)
         // Enter an invalid password to see if noAuth will persist
         oktaSignInWithPKCE(fakeAuthUserName, fakeAuthPassword, false)
